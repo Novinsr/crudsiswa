@@ -13,21 +13,14 @@ function validasi(body) {
   const data = {
     nis: String(body.nis ?? '').trim(),
     nama: String(body.nama ?? '').trim(),
-    kelas: String(body.kelas ?? '').trim(),
-    jenis_kelamin: String(body.jenis_kelamin ?? '').trim(),
-    agama: String(body.agama ?? '').trim() || null,
-    hobi: String(body.hobi ?? '').trim() || null,
+    jurusan: String(body.jurusan ?? '').trim(),
     tanggal_lahir: String(body.tanggal_lahir ?? '').trim() || null,
     alamat: String(body.alamat ?? '').trim() || null,
-    no_hp: String(body.no_hp ?? '').trim() || null,
   };
 
   if (!data.nis) return { error: 'NIS wajib diisi.' };
   if (!data.nama) return { error: 'Nama wajib diisi.' };
-  if (!data.kelas) return { error: 'Kelas wajib diisi.' };
-  if (!['L', 'P'].includes(data.jenis_kelamin)) {
-    return { error: 'Jenis kelamin harus L atau P.' };
-  }
+  if (!data.jurusan) return { error: 'Jurusan wajib diisi.' };
   return { data };
 }
 
@@ -46,7 +39,7 @@ app.get('/api/siswa', (req, res) => {
     ? db
       .prepare(
         `SELECT * FROM siswa
-           WHERE nama LIKE @q OR nis LIKE @q OR kelas LIKE @q OR agama LIKE @q OR hobi LIKE @q
+           WHERE nama LIKE @q OR nis LIKE @q OR jurusan LIKE @q OR alamat LIKE @q
            ORDER BY nama COLLATE NOCASE`
       )
       .all({ q: `%${q}%` })
@@ -69,8 +62,8 @@ app.post('/api/siswa', (req, res) => {
   try {
     const info = db
       .prepare(
-        `INSERT INTO siswa (nis, nama, kelas, jenis_kelamin, agama, hobi, tanggal_lahir, alamat, no_hp)
-         VALUES (@nis, @nama, @kelas, @jenis_kelamin, @agama, @hobi, @tanggal_lahir, @alamat, @no_hp)`
+        `INSERT INTO siswa (nis, nama, jurusan, tanggal_lahir, alamat)
+         VALUES (@nis, @nama, @jurusan, @tanggal_lahir, @alamat)`
       )
       .run(data);
     const row = db.prepare('SELECT * FROM siswa WHERE id = ?').get(info.lastInsertRowid);
@@ -88,8 +81,8 @@ app.put('/api/siswa/:id', (req, res) => {
   try {
     const info = db
       .prepare(
-        `UPDATE siswa SET nis=@nis, nama=@nama, kelas=@kelas, jenis_kelamin=@jenis_kelamin,
-           agama=@agama, hobi=@hobi, tanggal_lahir=@tanggal_lahir, alamat=@alamat, no_hp=@no_hp
+        `UPDATE siswa SET nis=@nis, nama=@nama, jurusan=@jurusan,
+           tanggal_lahir=@tanggal_lahir, alamat=@alamat
          WHERE id=@id`
       )
       .run({ ...data, id: req.params.id });

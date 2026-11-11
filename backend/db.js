@@ -9,24 +9,20 @@ db.exec(`
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
     nis            TEXT NOT NULL UNIQUE,
     nama           TEXT NOT NULL,
-    kelas          TEXT NOT NULL,
-    jenis_kelamin  TEXT NOT NULL CHECK (jenis_kelamin IN ('L', 'P')),
-    agama          TEXT,
-    hobi           TEXT,
+    jurusan        TEXT NOT NULL,
     tanggal_lahir  TEXT,
     alamat         TEXT,
-    no_hp          TEXT,
     created_at     TEXT DEFAULT (datetime('now', 'localtime'))
   )
 `);
 
-// Migrasi kolom jika tabel sudah ada sebelumnya
+// Migrasi kolom jika ada perubahan dari versi sebelumnya
 const columns = db.prepare('PRAGMA table_info(siswa)').all().map((c) => c.name);
-if (!columns.includes('agama')) {
-  db.exec('ALTER TABLE siswa ADD COLUMN agama TEXT');
+if (columns.includes('kelas') && !columns.includes('jurusan')) {
+  db.exec('ALTER TABLE siswa RENAME COLUMN kelas TO jurusan');
 }
-if (!columns.includes('hobi')) {
-  db.exec('ALTER TABLE siswa ADD COLUMN hobi TEXT');
+if (!columns.includes('tanggal_lahir')) {
+  db.exec('ALTER TABLE siswa ADD COLUMN tanggal_lahir TEXT');
 }
 
 module.exports = db;

@@ -37,4 +37,4 @@ Buka http://localhost:5173
 | PUT    | /api/siswa/:id    | Ubah siswa                          |
 | DELETE | /api/siswa/:id    | Hapus siswa                         |
 
-Field: `nis` (unik), `nama`, `kelas`, `jenis_kelamin` (L/P), `agama`, `hobi`, `tanggal_lahir`, `alamat`, `no_hp`.
+Field: `nis` (unik), `nama`, `jurusan`, `tanggal_lahir`, `alamat`.
